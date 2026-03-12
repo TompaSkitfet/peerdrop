@@ -35,7 +35,7 @@ func (m *Manager) Create(sessionId string, peer *Peer) *Session {
 
 func (m *Manager) Get(sessionId string) (*Session, bool) {
 	m.mu.RLock()
-	defer m.mu.Unlock()
+	defer m.mu.RUnlock()
 
 	s, ok := m.sessions[sessionId]
 	return s, ok
