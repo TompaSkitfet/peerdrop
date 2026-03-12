@@ -8,7 +8,7 @@ import (
 	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/sessions"
 )
 
-func generateSessionId() string {
+func GenerateSessionId() string {
 	const letters = "ABCDEFGHIJKLMNOPQRSTUVXYZ0123456789"
 
 	b := make([]byte, 6)
@@ -20,10 +20,10 @@ func generateSessionId() string {
 }
 
 func (c *Client) handleCreateSession() {
-	sessionId := generateSessionId()
+	sessionId := GenerateSessionId()
 
 	peer := &sessions.Peer{
-		Id: generateSessionId(),
+		Id: GenerateSessionId(),
 	}
 
 	c.sessions.Create(sessionId, peer)
@@ -53,7 +53,7 @@ func (c *Client) handleJoinSession(msg Message) {
 	}
 
 	peer := &sessions.Peer{
-		Id: generateSessionId(),
+		Id: GenerateSessionId(),
 	}
 
 	session, ok := c.sessions.AddPeer(data.SessionId, peer)
@@ -64,6 +64,10 @@ func (c *Client) handleJoinSession(msg Message) {
 			Data: "session_not_found",
 		})
 		return
+	}
+
+	for p := range session.Peers {
+		log.Println(p)
 	}
 
 	c.conn.WriteJSON(Message{
