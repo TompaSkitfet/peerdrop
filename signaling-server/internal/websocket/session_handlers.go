@@ -20,6 +20,15 @@ func GenerateSessionId() string {
 }
 
 func (c *Client) handleCreateSession() {
+
+	if c.peer != nil {
+		c.conn.WriteJSON(Message{
+			Type: "error",
+			Data: "already_in_session",
+		})
+		return
+	}
+
 	sessionId := GenerateSessionId()
 
 	peer := &sessions.Peer{
@@ -40,6 +49,15 @@ func (c *Client) handleCreateSession() {
 }
 
 func (c *Client) handleJoinSession(msg Message) {
+
+	if c.peer != nil {
+		c.conn.WriteJSON(Message{
+			Type: "error",
+			Data: "already_in_session",
+		})
+		return
+	}
+
 	var data JoinSessionData
 
 	b, err := json.Marshal(msg.Data)
@@ -65,6 +83,8 @@ func (c *Client) handleJoinSession(msg Message) {
 		})
 		return
 	}
+
+	c.peer = peer
 
 	for p := range session.Peers {
 		log.Println(p)

@@ -11,6 +11,7 @@ import (
 type Client struct {
 	conn     *websocket.Conn
 	sessions *sessions.Manager
+	peer     *sessions.Peer
 }
 
 func NewClient(conn *websocket.Conn, sessions *sessions.Manager) *Client {
