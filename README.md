@@ -20,3 +20,4 @@ Requires Go.
 git clone https://github.com/TompaSkitfet/peerdrop
 cd peerdrop
 go run main.go
+```
