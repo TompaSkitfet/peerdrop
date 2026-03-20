@@ -45,6 +45,7 @@ func (c *Client) handleCreateSession() {
 			"sessionId": sessionId,
 		},
 	}
+	c.peer = peer
 	c.conn.WriteJSON(resp)
 }
 
