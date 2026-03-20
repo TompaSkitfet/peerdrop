@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/sessions"
+	"github.com/go-playground/locales/ses"
 )
 
 func GenerateSessionId() string {
@@ -43,9 +44,12 @@ func (c *Client) handleCreateSession() {
 		Type: "session_created",
 		Data: map[string]string{
 			"sessionId": sessionId,
+			"peerId":    peer.Id,
 		},
 	}
 	c.peer = peer
+	c.sessionId = sessionId
+
 	c.conn.WriteJSON(resp)
 }
 
@@ -85,18 +89,105 @@ func (c *Client) handleJoinSession(msg Message) {
 		return
 	}
 
-	c.peer = peer
+	for id, p := range session.Peers {
+		if id == c.peer.Id {
+			continue
+		}
 
-	for p := range session.Peers {
-		log.Println(p)
+		p.Conn.WriteJSON(Message{
+			Type: "peer_joined",
+			Data: map[string]string{
+				"peerId": c.peer.Id,
+			},
+		})
+	}
+
+	c.peer = peer
+	c.sessionId = session.Id
+
+	peerIds := []string{}
+	for id := range session.Peers {
+		if id != c.peer.Id {
+			peerIds = append(peerIds, id)
+		}
 	}
 
 	c.conn.WriteJSON(Message{
 		Type: "session_joined",
 		Data: map[string]any{
 			"sessionId": session.Id,
-			"peers":     len(session.Peers),
+			"peerId":    peer.Id,
+			"peers":     peerIds,
 		},
 	})
 
+}
+
+func (c *Client) handleLeaveSession() {
+	if c.peer == nil || c.sessionId == "" {
+		return
+	}
+
+	session, ok := c.sessions.Get(c.sessionId)
+	if ok {
+		for id, p := range session.Peers {
+			if id == c.peer.Id {
+				continue
+			}
+
+			p.Conn.WriteJSON(Message{
+				Type: "peer_left",
+				Data: map[string]string{
+					"peerId": c.peer.Id,
+				},
+			})
+		}
+	}
+
+	c.sessions.RemovePeer(c.sessionId, c.peer.Id)
+
+	c.peer = nil
+	c.sessionId = ""
+
+	c.conn.WriteJSON(Message{
+		Type: "session_left",
+	})
+}
+
+func (c *Client) handleSignal(msg Message) {
+	if c.peer == nil || c.sessionId == "" {
+		return
+	}
+
+	var data SignalData
+	b, err := json.Marshal(msg.Data)
+	if err != nil {
+		return
+	}
+
+	if err := json.Unmarshal(b, &data); err != nil {
+		return
+	}
+
+	session, ok := c.sessions.Get(c.sessionId)
+	if !ok {
+		return
+	}
+
+	for id, peer := range session.Peers {
+		if id == c.peer.Id {
+			continue
+		}
+		if data.To != "" && data.To != id {
+			continue
+		}
+
+		peer.Conn.WriteJSON(Message{
+			Type: "signal",
+			Data: map[string]any{
+				"from": c.peer.Id,
+				"data": data.Data,
+			},
+		})
+	}
 }

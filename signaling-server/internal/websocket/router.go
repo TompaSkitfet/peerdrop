@@ -12,6 +12,12 @@ func (c *Client) routeMessage(msg Message) {
 	case "join_session":
 		c.handleJoinSession(msg)
 
+	case "leave_session":
+		c.handleLeaveSession()
+
+	case "signal":
+		c.handleSignal()
+
 	default:
 		log.Println("unknown message type:", msg.Type)
 	}

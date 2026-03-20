@@ -1,9 +1,14 @@
 package sessions
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/gorilla/websocket"
+)
 
 type Peer struct {
-	Id string
+	Id   string
+	Conn *websocket.Conn
 }
 
 type Session struct {
@@ -51,4 +56,21 @@ func (m *Manager) AddPeer(sessionId string, peer *Peer) (*Session, bool) {
 	}
 	s.Peers[peer.Id] = peer
 	return s, true
+}
+
+func (m *Manager) RemovePeer(sessionId string, peerId string) {
+
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	s, ok := m.sessions[sessionId]
+	if !ok {
+		return
+	}
+
+	delete(s.Peers, peerId)
+
+	if len(s.Peers) == 0 {
+		delete(m.sessions, sessionId)
+	}
 }

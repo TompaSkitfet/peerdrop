@@ -8,3 +8,8 @@ type Message struct {
 type JoinSessionData struct {
 	SessionId string `json:"sessionId"`
 }
+
+type SignalData struct {
+	To   string `json:"to,omitempty"`
+	Data any    `json:"data"`
+}
