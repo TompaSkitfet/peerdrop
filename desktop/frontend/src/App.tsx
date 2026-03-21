@@ -1,37 +1,17 @@
-import { useState } from "react";
-import { Greet } from "../wailsjs/go/main/App";
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline } from "@mui/material";
+import { Box } from "@mui/system";
+import { default_theme } from "./themes/default";
+import Home from "./views/Home";
 
 function App() {
-  const [resultText, setResultText] = useState(
-    "Please enter your name below 👇",
-  );
-  const [name, setName] = useState("");
-  const updateName = (e: any) => setName(e.target.value);
-  const updateResultText = (result: string) => setResultText(result);
-
-  function greet() {
-    Greet(name).then(updateResultText);
-  }
-
   return (
-    <div id="App">
-      <div id="result" className="result">
-        {resultText}
-      </div>
-      <div id="input" className="input-box">
-        <input
-          id="name"
-          className="input"
-          onChange={updateName}
-          autoComplete="off"
-          name="input"
-          type="text"
-        />
-        <button className="btn" onClick={greet}>
-          Greet
-        </button>
-      </div>
-    </div>
+    <ThemeProvider theme={default_theme}>
+      <CssBaseline />
+      <Box sx={{ minHeight: "100vh", minWidth: "100vw" }}>
+        <Home />
+      </Box>
+    </ThemeProvider>
   );
 }
 
