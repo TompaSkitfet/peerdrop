@@ -16,7 +16,7 @@ func (c *Client) routeMessage(msg Message) {
 		c.handleLeaveSession()
 
 	case "signal":
-		c.handleSignal()
+		c.handleSignal(msg)
 
 	default:
 		log.Println("unknown message type:", msg.Type)

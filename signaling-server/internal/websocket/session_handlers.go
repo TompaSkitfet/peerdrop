@@ -6,7 +6,6 @@ import (
 	"math/rand"
 
 	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/sessions"
-	"github.com/go-playground/locales/ses"
 )
 
 func GenerateSessionId() string {
