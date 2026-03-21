@@ -8,7 +8,7 @@ function App() {
   return (
     <ThemeProvider theme={default_theme}>
       <CssBaseline />
-      <Box sx={{ minHeight: "100vh", minWidth: "100vw" }}>
+      <Box sx={{ height: "100vh", width: "100vw" }}>
         <Home />
       </Box>
     </ThemeProvider>
