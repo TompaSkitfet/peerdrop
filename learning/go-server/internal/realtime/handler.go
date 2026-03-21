@@ -9,12 +9,13 @@ import (
 
 type Handler struct {
 	upgrader websocket.Upgrader
+	hub      *Hub
 }
 
-func NewHandler() *Handler {
+func NewHandler(hub *Hub) *Handler {
 	return &Handler{upgrader: websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
-	}}
+	}, hub: hub}
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("client connected")
-	client := NewClient(conn)
+	client := NewClient(h.hub, conn)
+
+	go func() { h.hub.register <- client }()
 
 	go client.ReadLoop()
+	go client.WriteLoop()
 }

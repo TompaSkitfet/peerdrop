@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
+	hub := realtime.NewHub()
+	go hub.Run()
 
-	handler := realtime.NewHandler()
+	handler := realtime.NewHandler(hub)
 
 	mux := http.NewServeMux()
 	mux.Handle("/ws", handler)
