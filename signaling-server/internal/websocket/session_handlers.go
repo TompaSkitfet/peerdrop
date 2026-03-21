@@ -32,7 +32,8 @@ func (c *Client) handleCreateSession() {
 	sessionId := GenerateSessionId()
 
 	peer := &sessions.Peer{
-		Id: GenerateSessionId(),
+		Id:   GenerateSessionId(),
+		Conn: c.conn,
 	}
 
 	c.sessions.Create(sessionId, peer)
@@ -75,7 +76,8 @@ func (c *Client) handleJoinSession(msg Message) {
 	}
 
 	peer := &sessions.Peer{
-		Id: GenerateSessionId(),
+		Id:   GenerateSessionId(),
+		Conn: c.conn,
 	}
 
 	session, ok := c.sessions.AddPeer(data.SessionId, peer)
