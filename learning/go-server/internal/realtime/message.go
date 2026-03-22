@@ -1,7 +1,7 @@
 package realtime
 
 type Message struct {
-	SenderId    string
+	Sender      string
 	MessageType string
 	Content     []byte
 }
