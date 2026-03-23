@@ -4,17 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/sessions"
-	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/websocket"
+	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/realtime"
 )
 
 func main() {
-
-	sessionsManager := sessions.NewManager()
-	wsHandler := websocket.NewHandler(sessionsManager)
+	hub := realtime.NewHub()
+	handler := realtime.NewHandler(hub)
 
 	mux := http.NewServeMux()
-	mux.Handle("/ws", wsHandler)
+	mux.Handle("/ws", handler)
 
 	addr := ":8080"
 
@@ -22,5 +20,4 @@ func main() {
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatal(err)
 	}
-
 }
