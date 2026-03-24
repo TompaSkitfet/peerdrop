@@ -6,8 +6,7 @@ type Session struct {
 	Peer *Client
 }
 
-type JoinRequest struct {
+type JoinSessionRequest struct {
 	client    *Client
-	isHost    bool
 	sessionId string
 }

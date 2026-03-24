@@ -26,9 +26,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	client := NewClient(h.hub, conn)
 
-	go h.registerClient(client)
+	h.registerClient(client)
 
-	log.Printf("client connected")
+	go client.ReadPump()
+	go client.WritePump()
+
+	log.Printf("%s connected", client.Id)
 }
 
 func (h *Handler) registerClient(c *Client) {

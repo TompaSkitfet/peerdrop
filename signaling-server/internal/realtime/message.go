@@ -25,3 +25,17 @@ func (t MessageType) IsValid() bool {
 		return false
 	}
 }
+
+type JoinSessionData struct {
+	SessionId string `json:"session_id"`
+}
+
+type SDPData struct {
+	SDP string `json:"sdp"`
+}
+
+type ICECandidateDate struct {
+	Candidate     string `json:"candidate"`
+	SDPMid        string `json:"sdpMid"`
+	SDPMLineIndex int    `json:"sdpMLineIndex"`
+}
