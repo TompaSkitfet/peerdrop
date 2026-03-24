@@ -19,12 +19,18 @@ func NewHandler(hub *Hub) *Handler {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// conn, err := h.upgrader.Upgrade(w, r, nil)
-	_, err := h.upgrader.Upgrade(w, r, nil)
+	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("websocket upgrade failed: %v", err)
 		return
 	}
+	client := NewClient(h.hub, conn)
+
+	go h.registerClient(client)
 
 	log.Printf("client connected")
+}
+
+func (h *Handler) registerClient(c *Client) {
+	h.hub.register <- c
 }
