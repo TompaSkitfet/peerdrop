@@ -18,7 +18,12 @@ type Client struct {
 
 func NewClient(hub *Hub, conn *websocket.Conn) *Client {
 	id := util.GenerateId()
-	return &Client{Id: id, Hub: hub, Conn: conn, send: make(chan []byte, 256)}
+	return &Client{
+		Id:   id,
+		Hub:  hub,
+		Conn: conn,
+		send: make(chan []byte, 256),
+	}
 }
 
 func (c *Client) ReadPump() {
@@ -62,9 +67,8 @@ func (c *Client) parseMessage(msg []byte) {
 			return
 		}
 		c.Hub.joinSession <- r
-	case Offer:
-		c.getOffer()
-	case Answer:
+	case SDP:
+		c.parseSDP(m)
 		return
 	case IceCandidate:
 		return
@@ -86,9 +90,28 @@ func (c *Client) joinSession(data json.RawMessage) (JoinSessionRequest, error) {
 	return JoinSessionRequest{sessionId: r.SessionId, client: c}, nil
 }
 
-func (c *Client) getOffer() {
+func (c *Client) parseSDP(msg Message) {
+	var reciever *Client
+	if c == c.Session.Host {
+		reciever = c.Session.Peer
+	} else {
+		reciever = c.Session.Host
+	}
+
 	if c.Session.Peer == nil {
+		c.send <- []byte("no peer connected")
 		return
 	}
-	c.Session.Peer.send <- []byte("Test")
+	var r SDPData
+	if err := json.Unmarshal(msg.Data, &r); err != nil {
+		c.send <- []byte("invalid offer request")
+		return
+	}
+
+	data, err := json.Marshal(msg.Data)
+	if err != nil {
+		c.send <- []byte("failed to marshal offer")
+		return
+	}
+	reciever.send <- []byte(data)
 }

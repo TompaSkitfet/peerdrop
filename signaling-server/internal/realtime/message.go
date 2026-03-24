@@ -12,14 +12,13 @@ type MessageType string
 const (
 	CreateSession MessageType = "create_session"
 	JoinSession   MessageType = "join_session"
-	Offer         MessageType = "offer"
-	Answer        MessageType = "answer"
+	SDP           MessageType = "sdp"
 	IceCandidate  MessageType = "ice-candidate"
 )
 
 func (t MessageType) IsValid() bool {
 	switch t {
-	case CreateSession, JoinSession, Offer, Answer, IceCandidate:
+	case CreateSession, JoinSession, SDP, IceCandidate:
 		return true
 	default:
 		return false
@@ -31,7 +30,8 @@ type JoinSessionData struct {
 }
 
 type SDPData struct {
-	SDP string `json:"sdp"`
+	Type string `json:"type"`
+	SDP  string `json:"sdp"`
 }
 
 type ICECandidateDate struct {

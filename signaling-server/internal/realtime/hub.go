@@ -13,7 +13,14 @@ type Hub struct {
 }
 
 func NewHub() *Hub {
-	return &Hub{sessions: map[string]*Session{}, clients: map[*Client]bool{}, register: make(chan *Client), unregister: make(chan *Client), createSession: make(chan *Session), joinSession: make(chan JoinSessionRequest), closeSession: make(chan *Session)}
+	return &Hub{
+		sessions:      map[string]*Session{},
+		clients:       map[*Client]bool{},
+		register:      make(chan *Client),
+		unregister:    make(chan *Client),
+		createSession: make(chan *Session),
+		joinSession:   make(chan JoinSessionRequest),
+		closeSession:  make(chan *Session)}
 }
 
 func (h *Hub) Run() {
