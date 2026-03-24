@@ -1,4 +1,4 @@
-module github.com/TompaSkitfet/peerdrop/desktop
+module github.com/TompaSkitfet/peerdrop
 
 go 1.23
 
