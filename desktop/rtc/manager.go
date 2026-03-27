@@ -46,6 +46,3 @@ func (m *WebRTCManger) CreatePeer(id string) error {
 
 	return nil
 }
-
-func (m *WebRTCManger) SendFile(path string) error
-func (m *WebRTCManger) ClosePeer()
