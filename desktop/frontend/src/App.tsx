@@ -2,7 +2,8 @@ import { EventsOn } from "../wailsjs/runtime/runtime";
 import { SendSignal } from "../wailsjs/go/main/App";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Box, Stack } from "@mui/system";
-import { Button, Paper, TextField, Typography } from "@mui/material";
+import { Button, Divider, TextField, Typography } from "@mui/material";
+import { Message } from "./types/message";
 
 function App() {
   const [msg, setMsg] = useState("");
@@ -12,11 +13,20 @@ function App() {
     const unsubscribe = EventsOn("signal", (message: string) => {
       setMsg(message);
     });
-    return unsubscribe();
+    return unsubscribe;
   }, []);
 
-  function SendMessage() {
-    SendSignal(textValue);
+  function CreateSession() {
+    const payload: Message = { type: "create_session" };
+    SendSignal(JSON.stringify(payload));
+  }
+
+  function JoinSession() {
+    const payload: Message = {
+      type: "join_session",
+      data: { session_id: textValue },
+    };
+    SendSignal(JSON.stringify(payload));
   }
 
   return (
@@ -32,14 +42,18 @@ function App() {
     >
       <Stack sx={{ alignItems: "center", gap: 2 }}>
         <Typography>Websocket Test</Typography>
+        <Button fullWidth variant="contained" onClick={CreateSession}>
+          Skapa session
+        </Button>
+        <Divider />
         <TextField
           value={textValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setTextValue(e.target.value);
           }}
         />
-        <Button fullWidth variant="contained" onClick={SendMessage}>
-          Skicka
+        <Button fullWidth variant="contained" onClick={JoinSession}>
+          Anslut till session
         </Button>
         <Typography>{msg}</Typography>
       </Stack>
