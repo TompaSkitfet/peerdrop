@@ -41,3 +41,7 @@ func (m *WebsocketManager) listenWS() {
 func (m *WebsocketManager) handleSignal(msg []byte) {
 	runtime.EventsEmit(m.ctx, "signal", string(msg))
 }
+
+func (m *WebsocketManager) SendSignal(msg string) error {
+	return m.Conn.WriteMessage(websocket.TextMessage, []byte(msg))
+}

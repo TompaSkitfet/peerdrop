@@ -2,6 +2,7 @@ package realtime
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/TompaSkitfet/peerdrop/signaling-server/internal/util"
@@ -79,6 +80,7 @@ func (c *Client) createSession() *Session {
 	id := util.GenerateId()
 	session := &Session{Id: id, Host: c}
 	c.Session = session
+	c.Conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Created session: %s", id)))
 	return session
 }
 

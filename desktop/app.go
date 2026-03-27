@@ -27,3 +27,7 @@ func (a *App) startup(ctx context.Context) {
 	a.wsManager = signaling.NewWebsocketManager(ctx)
 	a.wsManager.ConnectWebSocket()
 }
+
+func (a *App) SendSignal(msg string) error {
+	return a.wsManager.SendSignal(msg)
+}
